@@ -8,9 +8,10 @@ from django.urls import path
 
 urlpatterns = [
     # User authentication URLs
-    path('books/add/', views.add_book, name='add_book'),
-    path('books/edit/<int:book_id>/', views.edit_book, name='edit_book'),
-    path('books/delete/<int:book_id>/', views.delete_book, name='delete_book'),
+    path('books/add/', views.add_book, name='add_book'),  # URL for adding a new book
+    path('books/edit/<int:book_id>/', views.edit_book, name='edit_book'),  # URL for editing a book
+    path('books/delete/<int:book_id>/', views.delete_book, name='delete_book'),  # URL for deleting a book
+
     path('admin/', views.admin_view, name='admin_view'),
     path('librarian/', views.librarian_view, name='librarian_view'),
     path('member/', views.member_view, name='member_view'),
