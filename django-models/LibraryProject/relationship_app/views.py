@@ -75,7 +75,7 @@ def is_member(user):
 
 # Admin view
 @user_passes_test(is_admin)
-def admin_view(request):
+def Admin(request):
     return HttpResponse("Welcome, Admin! You have access to this page.")
 
 # Librarian view
