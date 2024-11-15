@@ -11,7 +11,7 @@ from django.urls import path, include
 urlpatterns = [
     # User authentication URLs
     # URL pattern for adding a new book
-    path('books/add/', views.add_book, name='add_book'),  
+    path('add_book/', views.add_book, name='add_book'),  
     
     # URL pattern for editing a book
     path('books/edit/<int:book_id>/', views.edit_book, name='edit_book'),  
