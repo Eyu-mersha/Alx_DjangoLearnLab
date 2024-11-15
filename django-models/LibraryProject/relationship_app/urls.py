@@ -14,7 +14,7 @@ urlpatterns = [
     path('add_book/', views.add_book, name='add_book'),  
     
     # URL pattern for editing a book
-    path('books/edit/<int:book_id>/', views.edit_book, name='edit_book'),  
+    path('edit_book/', views.edit_book, name='edit_book'),  
     
     # URL pattern for deleting a book
     path('books/delete/<int:book_id>/', views.delete_book, name='delete_book'),
