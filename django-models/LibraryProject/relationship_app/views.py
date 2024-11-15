@@ -7,6 +7,37 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render, redirect
+# relationship_app/views.py
+from django.contrib.auth.decorators import user_passes_test
+from django.http import HttpResponse
+
+# Check for Admin role
+def is_admin(user):
+    return user.userprofile.role == 'Admin'
+
+# Check for Librarian role
+def is_librarian(user):
+    return user.userprofile.role == 'Librarian'
+
+# Check for Member role
+def is_member(user):
+    return user.userprofile.role == 'Member'
+
+# Admin view
+@user_passes_test(is_admin)
+def admin_view(request):
+    return HttpResponse("Welcome, Admin! You have access to this page.")
+
+# Librarian view
+@user_passes_test(is_librarian)
+def librarian_view(request):
+    return HttpResponse("Welcome, Librarian! You have access to this page.")
+
+# Member view
+@user_passes_test(is_member)
+def member_view(request):
+    return HttpResponse("Welcome, Member! You have access to this page.")
+
 
 # User registration view using Django's built-in UserCreationForm
 def register(request):
