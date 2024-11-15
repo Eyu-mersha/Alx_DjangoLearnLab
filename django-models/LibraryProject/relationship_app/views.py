@@ -3,6 +3,27 @@ from django.shortcuts import render
 from .models import Book
 from .models import Library
 from django.views.generic.detail import DetailView
+from django.contrib.auth import login, logout
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.views import LoginView, LogoutView
+from django.shortcuts import render, redirect
+
+# User registration view using Django's built-in UserCreationForm
+def register(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # After successful registration, log the user in
+            username = form.cleaned_data.get('username')
+            user = form.save()
+            login(request, user)  # Automatically log the user in after registration
+            return redirect('home')  # Redirect to a home page (change as needed)
+    else:
+        form = UserCreationForm()
+    return render(request, 'relationship_app/register.html', {'form': form})
+
+
 
 
 # Function-based view to list all books
