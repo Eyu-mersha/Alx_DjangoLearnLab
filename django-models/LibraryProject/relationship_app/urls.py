@@ -20,7 +20,7 @@ urlpatterns = [
     path('books/delete/<int:book_id>/', views.delete_book, name='delete_book'),
     path('admin/', admin.site.urls),
     path('books/', include('relationship_app.urls')),
-    path('admin/', views.Admin, name='Admin'),
+    path('admin/', views.Admin, name='admin_view'),
     path('librarian/', views.librarian_view, name='librarian_view'),
     path('member/', views.member_view, name='member_view'),
     path('login/', auth_views.LoginView.as_view(template_name='relationship_app/login.html'), name='login'),

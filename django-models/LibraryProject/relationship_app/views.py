@@ -62,7 +62,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.http import HttpResponse
 
 # Check for Admin role
-def Admin(user):
+def is_admin(user):
     return user.userprofile.role == 'Admin'
 
 # Check for Librarian role
