@@ -1,2 +1,1 @@
-# LibraryProject
-dsfdsf
+This is a Django project
