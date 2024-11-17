@@ -1,6 +1,19 @@
 
 
 from pathlib import Path
+
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_REDIRECT_EXEMPT = ['/path-to-ignore']
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_REFERRER_POLICY = 'no-referrer-when-downgrade'
+
 # LibraryProject/settings.py
 
 # Set DEBUG to False in production for security
