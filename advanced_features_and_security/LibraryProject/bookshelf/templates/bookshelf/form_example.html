@@ -1,0 +1,17 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Submit a Book</title>
+</head>
+<body>
+    <h2>Submit a Book</h2>
+
+    <!-- Form to submit book title and description -->
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- This renders the form fields -->
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
