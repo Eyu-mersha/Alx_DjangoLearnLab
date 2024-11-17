@@ -13,6 +13,8 @@ X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_REFERRER_POLICY = 'no-referrer-when-downgrade'
+# Trust the 'HTTP_X_FORWARDED_PROTO' header for determining HTTPS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # LibraryProject/settings.py
 
