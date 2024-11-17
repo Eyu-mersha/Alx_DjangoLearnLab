@@ -14,7 +14,9 @@ from pathlib import Path
 
 # advanced_features_and_security/settings.py
 
-AUTH_USER_MODEL = 'advanced_features_and_security.CustomUser'
+# LibraryProject/settings.py
+
+AUTH_USER_MODEL = "bookshelf.CustomUser"
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
