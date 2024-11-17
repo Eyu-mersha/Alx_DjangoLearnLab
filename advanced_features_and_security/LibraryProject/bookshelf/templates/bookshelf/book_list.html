@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book List</title>
+</head>
+<body>
+    <h2>List of Books</h2>
+
+    <!-- Check if there are any books -->
+    {% if books %}
+        <ul>
+            <!-- Loop through each book and display its title and description -->
+            {% for book in books %}
+                <li>
+                    <strong>{{ book.title }}</strong><br>
+                    <em>{{ book.author }}</em><br>
+                    <p>{{ book.description }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No books available.</p>
+    {% endif %}
+</body>
+</html>
