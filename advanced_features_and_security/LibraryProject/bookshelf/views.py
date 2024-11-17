@@ -5,6 +5,27 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required
 from .models import Book
 
+def create_book(request):
+    if request.method == 'POST':
+        form = BookForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('book_list')
+    else:
+        form = BookForm()
+    
+    return render(request, 'bookshelf/create_book.html', {'form': form})
+
+def book_search(request):
+    query = request.GET.get('q', '')
+    # Avoid raw SQL by using Django ORM's filter method
+    if query:
+        books = Book.objects.filter(title__icontains=query)  # Safe query using ORM
+    else:
+        books = Book.objects.all()
+
+    return render(request, 'bookshelf/book_list.html', {'books': books})
+
 # View for listing books (viewing)
 @permission_required('bookshelf.can_view', raise_exception=True)
 def book_list(request):
