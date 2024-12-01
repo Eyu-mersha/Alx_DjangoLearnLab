@@ -96,7 +96,7 @@ class BookAPITests(APITestCase):
         # Create a new user and get token
         user = self.create_user()  # Assuming you have a utility method to create users
         token = Token.objects.create(user=user)
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        self.client.login(HTTP_AUTHORIZATION='Token ' + token.key)
         
         # Create a book with authentication
         url = reverse('book-list')
@@ -111,7 +111,7 @@ class BookAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # Test without authentication (should fail)
-        self.client.credentials()  # Clear credentials
+        self.client.login()  # Clear login
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
     
