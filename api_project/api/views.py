@@ -28,19 +28,19 @@ from .serializers import BookSerializer
 from rest_framework.permissions import IsAuthenticated
 
 # List all books
-class BookListView(generics.ListCreateAPIView):
+class ListView(generics.ListCreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = []  # Allow unauthenticated users to view the list
 
 # Retrieve a single book
-class BookDetailView(generics.RetrieveAPIView):
+class DetailView(generics.RetrieveAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = []  # Allow unauthenticated users to view the book
 
 # Create a new book
-class BookCreateView(generics.CreateAPIView):
+class CreateView(generics.CreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
@@ -52,7 +52,7 @@ class BookCreateView(generics.CreateAPIView):
         serializer.save()
 
 # Update an existing book
-class BookUpdateView(generics.UpdateAPIView):
+class UpdateView(generics.UpdateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
@@ -65,7 +65,7 @@ class BookUpdateView(generics.UpdateAPIView):
   # Restrict to authenticated users
 
 # Delete a book
-class BookDeleteView(generics.DestroyAPIView):
+class DeleteView(generics.DestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]  # Restrict to authenticated users
