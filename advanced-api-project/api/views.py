@@ -5,33 +5,32 @@ from .serializers import BookSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter 
-from django_filters import rest_framework
- # Ensure this line is included
-import django_filters 
+from django_filters import rest_framework as filters
+
 
 
 
 # Create a custom filter class
-class BookFilter(django_filters.FilterSet):
-    title = django_filters.CharFilter(lookup_expr='icontains', label='Title')
-    author = django_filters.CharFilter(lookup_expr='icontains', label='Author')
-    publication_year = django_filters.NumberFilter(lookup_expr='exact', label='Publication Year')
-
+class BookFilter(filters.FilterSet):
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('title', 'title'),
+            ('publication_year', 'publication_year'),
+        )
+    )
+    
     class Meta:
         model = Book
-        fields = ['title', 'author', 'publication_year']
+        fields = ['title', 'publication_year']
 
+# BookListView for listing books with filtering, searching, and ordering capabilities
 class ListView(generics.ListCreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)  # Make sure this line is included
-    filterset_class = BookFilter  # Add the filterset class for custom filtering
-    search_fields = ['title', 'author']  # Enable searching by title and author
-    ordering_fields = ['title', 'publication_year']  # Allow ordering by title or publication year
-    ordering = ['title']  # Default ordering by title
-    permission_classes = []  # No authentication required for list view
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
+    filterset_class = BookFilter  # Use custom filter class for filtering and ordering
 
-# Retrieve a single book
 class DetailView(generics.RetrieveAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
