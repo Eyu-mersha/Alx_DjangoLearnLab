@@ -30,6 +30,26 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import DeleteView
 from django.urls import reverse_lazy
 from .models import Comment
+from django.db.models import Q
+from django.shortcuts import render
+from .models import Post, Tag
+
+def search(request):
+    query = request.GET.get('q', '')
+    posts = Post.objects.filter(
+        Q(title__icontains=query) |
+        Q(content__icontains=query) |
+        Q(tags__name__icontains=query)
+    ).distinct()
+    
+    return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})
+
+def tagged_posts(request, tag_name):
+    tag = Tag.objects.get(name=tag_name)
+    posts = tag.posts.all()
+    return render(request, 'blog/tagged_posts.html', {'posts': posts, 'tag': tag})
+
+
 @login_required
 def CommentCreateView(request, pk):
     post = get_object_or_404(Post, pk=pk)

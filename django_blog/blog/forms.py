@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Post
-from django import forms
+from .models import Post, Tag
 from .models import Comment
 
 class CommentForm(forms.ModelForm):
@@ -26,16 +25,20 @@ class CustomUserCreationForm(UserCreationForm):
         fields = ('username', 'email', 'password1', 'password2')
 
 class PostForm(forms.ModelForm):
+    tags = forms.ModelMultipleChoiceField(
+        queryset=Tag.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
     class Meta:
         model = Post
-        fields = ['title', 'content']
-        widgets = {
-            'content': forms.Textarea(attrs={'cols': 80, 'rows': 10}),
-        }
-
+        fields = ['title', 'content', 'tags']
     def save(self, commit=True):
         post = super().save(commit=False)
         if commit:
             post.author = self.user  # Associate the logged-in user as the author
             post.save()
         return post
+
+

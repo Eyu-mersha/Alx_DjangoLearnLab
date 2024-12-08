@@ -17,7 +17,11 @@
             </ul>
         </nav>
     </header>
-
+    <form method="get" action="{% url 'blog:search' %}">
+        <input type="text" name="q" placeholder="Search..." value="{{ query }}">
+        <button type="submit">Search</button>
+    </form>
+    
     <div class="content">
         {% block content %}
         <!-- Page-specific content goes here -->
