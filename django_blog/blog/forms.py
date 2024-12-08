@@ -2,6 +2,21 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Post
+from django import forms
+from .models import Comment
+
+class CommentForm(forms.ModelForm):
+    model = Comment
+    class Meta:
+        model = Comment
+        fields = ['content']
+
+    def save(self, commit=True):
+        comment = super().save(commit=False)
+        if commit:
+            comment.save()
+        return comment
+
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
