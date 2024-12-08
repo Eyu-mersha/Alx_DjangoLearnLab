@@ -59,7 +59,7 @@ def CommentUpdateView(request, pk):
     return render(request, 'blog/update_comment.html', {'form': form})
 
 @login_required
-def delete_comment(request, pk):
+def CommentDeleteView(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     if request.user != comment.author:
         raise Http404("You are not authorized to delete this comment.")
