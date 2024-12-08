@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
@@ -29,46 +30,37 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import DeleteView
 from django.urls import reverse_lazy
 from .models import Comment
+@login_required
+def delete_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    if request.user != comment.author:
+        raise Http404("You are not authorized to delete this comment.")
+    post_pk = comment.post.pk
+    comment.delete()
+    return redirect('blog:post_detail', pk=post_pk)
 
 @login_required
-def CommentDeleteView(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
-    if comment.author != request.user:
-        return redirect(comment.post.get_absolute_url())
-    
-    if request.method == 'POST':
-        comment.delete()
-        return redirect(comment.post.get_absolute_url())
-
-
-@login_required
-def CommentUpdateView(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
-    if comment.author != request.user:
-        return redirect(comment.post.get_absolute_url())
-    
+def update_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    if request.user != comment.author:
+        raise Http404("You are not authorized to edit this comment.")
     if request.method == 'POST':
         form = CommentForm(request.POST, instance=comment)
         if form.is_valid():
             form.save()
-            return redirect(comment.post.get_absolute_url())
+            return redirect('blog:post_detail', pk=comment.post.pk)
     else:
         form = CommentForm(instance=comment)
-    
-    return render(request, 'blog/comment_form.html', {'form': form})
-
+    return render(request, 'blog/update_comment.html', {'form': form})
 
 @login_required
-def CommentCreateView(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.author = request.user
-            comment.save()
-    return redirect(post.get_absolute_url())
+def delete_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    if request.user != comment.author:
+        raise Http404("You are not authorized to delete this comment.")
+    post_pk = comment.post.pk
+    comment.delete()
+    return redirect('blog:post_detail', pk=post_pk)
 
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
