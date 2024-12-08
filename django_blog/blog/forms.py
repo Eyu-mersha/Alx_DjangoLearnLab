@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from .models import Post, Tag
 from .models import Comment
 from taggit.forms import TagWidget 
+from django.forms import widgets  # This is necessary for customizing widgets
+
 
 class CommentForm(forms.ModelForm):
     model = Comment
