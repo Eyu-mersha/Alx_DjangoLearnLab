@@ -14,6 +14,62 @@ from django.urls import reverse_lazy
 from .forms import PostForm
 from .models import Post
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.views.generic import ListView, DetailView, CreateView
+from .models import Post, Comment
+from .forms import CommentForm
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.views.generic.edit import UpdateView
+from django.urls import reverse_lazy
+from .models import Comment
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.views.generic import DeleteView
+from django.urls import reverse_lazy
+from .models import Comment
+
+@login_required
+def CommentDeleteView(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if comment.author != request.user:
+        return redirect(comment.post.get_absolute_url())
+    
+    if request.method == 'POST':
+        comment.delete()
+        return redirect(comment.post.get_absolute_url())
+
+
+@login_required
+def CommentUpdateView(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if comment.author != request.user:
+        return redirect(comment.post.get_absolute_url())
+    
+    if request.method == 'POST':
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect(comment.post.get_absolute_url())
+    else:
+        form = CommentForm(instance=comment)
+    
+    return render(request, 'blog/comment_form.html', {'form': form})
+
+
+@login_required
+def CommentCreateView(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+    return redirect(post.get_absolute_url())
+
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
