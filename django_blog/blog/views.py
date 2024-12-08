@@ -33,6 +33,20 @@ from .models import Comment
 from django.db.models import Q
 from django.shortcuts import render
 from .models import Post, Tag
+from django.views.generic import ListView
+from taggit.models import Tag
+
+class PostByTagListView(ListView):
+    model = Post
+    template_name = 'blog/post_list_by_tag.html'  # Template to display posts filtered by tag
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        # Retrieve the tag by slug and filter posts by that tag
+        tag_slug = self.kwargs['tag_slug']
+        tag = Tag.objects.get(slug=tag_slug)
+        return Post.objects.filter(tags=tag).order_by('-published_date')  # Order posts by date
+
 
 def search(request):
     query = request.GET.get('q', '')
