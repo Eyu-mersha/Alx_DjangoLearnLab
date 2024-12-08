@@ -31,16 +31,21 @@ from django.views.generic import DeleteView
 from django.urls import reverse_lazy
 from .models import Comment
 @login_required
-def delete_comment(request, pk):
-    comment = get_object_or_404(Comment, pk=pk)
-    if request.user != comment.author:
-        raise Http404("You are not authorized to delete this comment.")
-    post_pk = comment.post.pk
-    comment.delete()
-    return redirect('blog:post_detail', pk=post_pk)
-
+def CommentCreateView(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            return redirect('blog:post_detail', pk=post.pk)
+    else:
+        form = CommentForm()
+    return render(request, 'blog/add_comment.html', {'form': form, 'post': post})
 @login_required
-def update_comment(request, pk):
+def CommentUpdateView(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     if request.user != comment.author:
         raise Http404("You are not authorized to edit this comment.")
