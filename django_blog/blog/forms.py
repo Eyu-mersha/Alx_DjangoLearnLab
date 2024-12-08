@@ -24,12 +24,10 @@ class CustomUserCreationForm(UserCreationForm):
         model = User
         fields = ('username', 'email', 'password1', 'password2')
 
+from taggit.forms import TagWidget  # Import TagWidget
+
 class PostForm(forms.ModelForm):
-    tags = forms.ModelMultipleChoiceField(
-        queryset=Tag.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
+    tags = forms.CharField(required=False, widget=TagWidget())  # Use TagWidget for tagging
 
     class Meta:
         model = Post
