@@ -1,0 +1,19 @@
+<!-- blog/templates/blog/post_list_by_tag.html -->
+{% extends 'base_generic.html' %}
+
+{% block content %}
+    <h2>Posts tagged with "{{ tag_slug }}"</h2>
+
+    {% if posts %}
+        <ul>
+            {% for post in posts %}
+                <li>
+                    <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a> - 
+                    {{ post.published_date|date:"Y-m-d" }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No posts found for this tag.</p>
+    {% endif %}
+{% endblock %}
