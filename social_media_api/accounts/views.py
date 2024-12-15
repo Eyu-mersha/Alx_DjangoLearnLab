@@ -12,24 +12,24 @@ class FollowUserView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, user_id):
-        user_to_follow = get_object_or_404(User, id=user_id)
+        user_to_follow = get_object_or_404(CustomUser.objects.all(), id=user_id)
         
         # Ensure the user cannot follow themselves
-        if user_to_follow == request.user:
+        if user_to_follow == request.CustomUser.objects.all():
             return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
         
         # Add the user to the following list
-        request.user.following.add(user_to_follow)
+        request.CustomUser.objects.all().following.add(user_to_follow)
         return Response({"detail": f"You are now following {user_to_follow.username}."}, status=status.HTTP_200_OK)
 
 class UnfollowUserView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, user_id):
-        user_to_unfollow = get_object_or_404(User, id=user_id)
+        user_to_unfollow = get_object_or_404(CustomUser.objects.all(), id=user_id)
         
         # Ensure the user cannot unfollow themselves
-        if user_to_unfollow == request.user:
+        if user_to_unfollow == request.CustomUser.objects.all():
             return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
         
         # Remove the user from the following list

@@ -14,8 +14,10 @@ class UserListView(APIView):
 
     def get(self, request):
         # Fetch all users
+        users = CustomUser.objects.all()  # Correct query for CustomUser model
+
         # Serialize the users using CustomUserSerializer
-        serializer = CustomUserSerializer(CustomUser.objects.all(), many=True)
+        serializer = CustomUserSerializer(users, many=True)
         return Response(serializer.data)
 
 
@@ -24,7 +26,7 @@ class FeedView(APIView):
 
     def get(self, request):
         # Get the list of users the current user is following
-        following = request.CustomUser.objects.all().following.all()
+        following = request.user.following.all()
         
         # Get posts from users they are following
         posts = Post.objects.filter(author__in=following).order_by('-created_at')  # Most recent posts first
