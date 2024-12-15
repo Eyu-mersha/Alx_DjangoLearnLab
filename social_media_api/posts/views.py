@@ -20,22 +20,22 @@ class LikePostView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
+        # Get the post using pk, and return 404 if not found
         post = get_object_or_404(Post, pk=pk)
-        user = request.user
+        user = request.user  # Get the authenticated user
         
-        # Prevent a user from liking a post more than once
-        if Like.objects.filter(user=user, post=post).exists():
+        # Ensure that the user doesn't like the same post twice
+        like, created = Like.objects.get_or_create(user=user, post=post)
+        
+        if not created:
             return Response({"detail": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Create a like
-        like = Like.objects.create(user=user, post=post)
-
-        # Create a notification for the post author
+        # After liking, create a notification for the post owner
         Notification.objects.create(
             recipient=post.author,
             actor=user,
             verb="liked",
-            target=post,
+            target=post
         )
 
         return Response({"detail": "Post liked successfully."}, status=status.HTTP_201_CREATED)
