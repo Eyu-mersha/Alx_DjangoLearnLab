@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import environ
+
+# Initialize environment variables
+env = environ.Env()
+environ.Env.read_env()  # Read .env file if it exists
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,12 +30,14 @@ SECRET_KEY = 'django-insecure-2^&pk+q-o4#0#ud7bz+u%ffr@#*sw*6_-k!7!z2u(pmj-8)y66
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['yourdomain.com', 'www.yourdomain.com']
+
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 
 
 # Application definition
+DEBUG = False
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -85,14 +92,30 @@ WSGI_APPLICATION = 'social_media_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'alx_db',      
+        'USER': 'eyu_mersha',     
+        'PASSWORD': '161992',  
+        'HOST': 'localhost',     
+        'PORT': '5432',             
     }
 }
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_SSL_REDIRECT = True
 
+# Static files (CSS, JavaScript, images)
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+# Media files (user uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+import os
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 AUTH_PASSWORD_VALIDATORS = [
     {
