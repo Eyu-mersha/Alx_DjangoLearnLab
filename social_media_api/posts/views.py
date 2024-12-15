@@ -25,9 +25,9 @@ class LikePostView(APIView):
         user = request.user  # The user performing the action
         
         # Ensure that the user doesn't like the same post twice
-        like, created = Like.objects.get_or_create(user=user, post=post)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
         
-        if not Like.objects.get_or_create(user=user, post=post):
+        if not Like.objects.get_or_create(user=request.user, post=post):
             return Response({"detail": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
         
         # After liking, create a notification for the post owner
