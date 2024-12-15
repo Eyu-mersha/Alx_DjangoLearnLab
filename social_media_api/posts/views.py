@@ -8,6 +8,31 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import CustomUser
 from .serializers import CustomUserSerializer  # Assuming you have a serializer for CustomUser
+from rest_framework import generics, status
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from .models import Post
+from accounts.models import CustomUser  # Import your CustomUser model
+from .serializers import PostSerializer  # Assuming you have a Post serializer
+
+class UserFeedView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Get the current user
+        user = request.user
+        
+        # Get the list of users that the current user is following
+        following_users = user.following.all()
+
+        # Filter posts that are written by the users the current user is following
+        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
+        
+        # Serialize the posts
+        serializer = PostSerializer(posts, many=True)
+
+        # Return the serialized posts as the response
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -20,20 +45,6 @@ class UserListView(APIView):
         serializer = CustomUserSerializer(users, many=True)
         return Response(serializer.data)
 
-
-class FeedView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request):
-        # Get the list of users the current user is following
-        following = request.user.following.all()
-        
-        # Get posts from users they are following
-        posts = Post.objects.filter(author__in=following).order_by('-created_at')  # Most recent posts first
-        
-        # Serialize the posts
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data)
 
 
 class PostViewSet(viewsets.ModelViewSet):
