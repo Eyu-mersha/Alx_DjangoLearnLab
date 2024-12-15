@@ -4,8 +4,25 @@ from rest_framework import viewsets, permissions
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-
 from rest_framework import filters
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+
+class FeedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Get the list of users the current user is following
+        following = request.user.following.all()
+        
+        # Get posts from users they are following
+        posts = Post.objects.filter(author__in=following).order_by('-created_at')  # Most recent posts first
+        
+        # Serialize the posts
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
+
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
