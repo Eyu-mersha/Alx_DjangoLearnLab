@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from rest_framework import viewsets, permissions
-from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework import filters
@@ -11,9 +10,52 @@ from .serializers import CustomUserSerializer  # Assuming you have a serializer 
 from rest_framework import generics, status
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from .models import Post
 from accounts.models import CustomUser  # Import your CustomUser model
 from .serializers import PostSerializer  # Assuming you have a Post serializer
+from .models import Post, Like, Comment
+from notifications.models import Notification
+from accounts.models import CustomUser
+
+class LikePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        user = request.user
+        
+        # Prevent a user from liking a post more than once
+        if Like.objects.filter(user=user, post=post).exists():
+            return Response({"detail": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Create a like
+        like = Like.objects.create(user=user, post=post)
+
+        # Create a notification for the post author
+        Notification.objects.create(
+            recipient=post.author,
+            actor=user,
+            verb="liked",
+            target=post,
+        )
+
+        return Response({"detail": "Post liked successfully."}, status=status.HTTP_201_CREATED)
+
+class UnlikePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        user = request.user
+        
+        # Check if the user has already liked the post
+        like = Like.objects.filter(user=user, post=post).first()
+        if not like:
+            return Response({"detail": "You have not liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Remove the like
+        like.delete()
+
+        return Response({"detail": "Post unliked successfully."}, status=status.HTTP_200_OK)
 
 class UserFeedView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
