@@ -1,5 +1,4 @@
 from django.shortcuts import render
-
 from rest_framework import viewsets, permissions
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
@@ -7,10 +6,23 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework import filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from .models import CustomUser
+from .serializers import CustomUserSerializer  # Assuming you have a serializer for CustomUser
+
+class UserListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        # Fetch all users
+        users = CustomUser.objects.all()  # Correct query for CustomUser model
+        
+        # Serialize the users using CustomUserSerializer
+        serializer = CustomUserSerializer(users, many=True)
+        return Response(serializer.data)
 
 
 class FeedView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         # Get the list of users the current user is following

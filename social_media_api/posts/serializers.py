@@ -1,6 +1,12 @@
 from rest_framework import serializers
 from .models import Post, Comment
 from django.contrib.auth import get_user_model
+from .models import CustomUser
+
+class CustomUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'bio', 'profile_picture', 'followers']  # Add any fields you want to expose
 
 # Serializer for the Post model
 class PostSerializer(serializers.ModelSerializer):
