@@ -11,9 +11,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # Handle password hashing using create_user
-        user = Token.objects.create_user(**validated_data)
+        user = get_user_model().objects.create_user(**validated_data)
         return user
-
 class AuthTokenSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
