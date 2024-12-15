@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
+from django.contrib.auth import get_user_model
+from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -8,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        # We handle the password hashing by using create_user instead of create
+        # Handle password hashing using create_user
         user = get_user_model().objects.create_user(**validated_data)
         return user
 
