@@ -6,37 +6,35 @@ from rest_framework import status, permissions
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from .models import User
-from rest_framework.permissions import permissions.IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 # Follow user
-@api_view(['POST'])
-def follow_user(request, user_id):
-    if not request.user.is_authenticated:
-        return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_401_UNAUTHORIZED)
+class FollowUserView(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-    user_to_follow = get_object_or_404(User, id=user_id)
-    
-    # Ensure a user doesn't follow themselves
-    if user_to_follow == request.user:
-        return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
-    
-    request.user.following.add(user_to_follow)  # Add to following
-    return Response({"detail": f"You are now following {user_to_follow.username}."}, status=status.HTTP_200_OK)
+    def post(self, request, user_id):
+        user_to_follow = get_object_or_404(User, id=user_id)
+        
+        # Ensure the user cannot follow themselves
+        if user_to_follow == request.user:
+            return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Add the user to the following list
+        request.user.following.add(user_to_follow)
+        return Response({"detail": f"You are now following {user_to_follow.username}."}, status=status.HTTP_200_OK)
 
-# Unfollow user
-@api_view(['POST'])
-def unfollow_user(request, user_id):
-    if not request.user.is_authenticated:
-        return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_401_UNAUTHORIZED)
+class UnfollowUserView(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-    user_to_unfollow = get_object_or_404(User, id=user_id)
-    
-    # Ensure a user doesn't unfollow themselves
-    if user_to_unfollow == request.user:
-        return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
-
-    request.user.following.remove(user_to_unfollow)  # Remove from following
-    return Response({"detail": f"You have unfollowed {user_to_unfollow.username}."}, status=status.HTTP_200_OK)
-
+    def post(self, request, user_id):
+        user_to_unfollow = get_object_or_404(User, id=user_id)
+        
+        # Ensure the user cannot unfollow themselves
+        if user_to_unfollow == request.user:
+            return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Remove the user from the following list
+        request.user.following.remove(user_to_unfollow)
+        return Response({"detail": f"You have unfollowed {user_to_unfollow.username}."}, status=status.HTTP_200_OK)
 
 class RegisterUserView(APIView):
     permission_classes = [AllowAny]
