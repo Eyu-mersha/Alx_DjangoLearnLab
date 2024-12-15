@@ -17,7 +17,7 @@ from notifications.models import Notification
 from accounts.models import CustomUser
 
 class LikePostView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
         # Get the post using pk, and return 404 if not found
@@ -25,7 +25,7 @@ class LikePostView(APIView):
         user = request.user  # Get the authenticated user
         
         # Ensure that the user doesn't like the same post twice
-        like, created = Like.objects.get_or_create(user=user, post=post)
+        like, created = Like.objects.get_or_create(user=user, post=get_object_or_404(Post, pk=pk))
         
         if not created:
             return Response({"detail": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
@@ -35,20 +35,20 @@ class LikePostView(APIView):
             recipient=post.author,
             actor=user,
             verb="liked",
-            target=post
+            target=get_object_or_404(Post, pk=pk)
         )
 
         return Response({"detail": "Post liked successfully."}, status=status.HTTP_201_CREATED)
 
 class UnlikePostView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         user = request.user
         
         # Check if the user has already liked the post
-        like = Like.objects.filter(user=user, post=post).first()
+        like = Like.objects.filter(user=user, post=get_object_or_404(Post, pk=pk)).first()
         if not like:
             return Response({"detail": "You have not liked this post."}, status=status.HTTP_400_BAD_REQUEST)
         
